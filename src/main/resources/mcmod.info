@@ -1,0 +1,23 @@
+[
+{
+  "modid": "specspoof",
+  "name": "Spec Spoof",
+  "description": "Fool your friends by spoofing your specs in the debug screen!
+
+   Commands:
+    /specspoof - Enable/disable the mod
+    /setcpu - Sets the spoofed CPU
+    /setgpu - Sets the spoofed GPU
+    /setgpuversion - Sets the spoofed GPU version
+    /setvendor - Sets the spoofed GPU vendor",
+  "version": "${version}",
+  "mcversion": "1.8.9",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["15Ibans"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
