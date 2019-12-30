@@ -8,6 +8,7 @@ import net.minecraft.command.*;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 
+import java.io.File;
 import java.util.List;
 
 //// to do:
@@ -50,14 +51,38 @@ public class SpecProfileCommand extends CommandBase implements ICommand {
         } else if (args.length >= 2 && args[0].equals("load")) {
             Profile profile = new Profile(SpecSpoof.configFolder + "\\profiles");
             String profileName = Utils.argsToString(args, 1);
-            profile.loadProfile(profileName);
+            boolean isLoaded = profile.loadProfile(profileName);
+            if (isLoaded) {
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.GREEN + "Loaded spec profile " + EnumChatFormatting.YELLOW + profileName));
+            } else {
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Failed to load profile " + EnumChatFormatting.YELLOW + profileName + EnumChatFormatting.RED + ". Maybe it doesn't exist?"));
+            }
         } else if (args.length >= 2 && args[0].equals("save")) {
             Profile profile = new Profile(SpecSpoof.configFolder + "\\profiles");
             String profileName = Utils.argsToString(args, 1);
             profile.saveProfile(profileName);
             Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.GREEN + "Saved spec profile as " + EnumChatFormatting.YELLOW + profileName + EnumChatFormatting.GREEN + "."));
         } else if (args.length >= 2 && args[0].equals("delete")) {
-
+            String profileName = Utils.argsToString(args, 1);
+            List<String> profileNames = Utils.listFilesInDirectory(SpecSpoof.configFolder + "\\profiles", ".profile");
+            boolean isProfileInFiles = false;
+            for (String profile : profileNames) {
+                if (profile.substring(0, profile.length() - 8).equals(profileName)) {
+                    isProfileInFiles = true;
+                    break;
+                }
+            }
+            if (isProfileInFiles) {
+                File f = new File(SpecSpoof.configFolder + "\\profiles\\" + profileName + ".profile");
+                boolean fileDeleted = f.delete();
+                if (fileDeleted)  {
+                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.GREEN + "Successfully deleted profile " + EnumChatFormatting.YELLOW + profileName));
+                } else {
+                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Unable to delete profile"));
+                }
+            } else {
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + profileName + " doesn't exist"));
+            }
         }
     }
 }

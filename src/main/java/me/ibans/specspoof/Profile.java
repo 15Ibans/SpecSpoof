@@ -1,8 +1,5 @@
 package me.ibans.specspoof;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -39,14 +36,13 @@ public class Profile {
         }
     }
 
-    public void loadProfile(String profileName) {
+    public boolean loadProfile(String profileName) {
         StringBuilder builder = new StringBuilder();
         try (Stream<String> stream = Files.lines(Paths.get(saveDir + "\\" + profileName + ".profile"), StandardCharsets.UTF_8)) {
             stream.forEach(s -> builder.append(s).append("\n"));
         } catch (IOException e) {
-            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Could not load profile because it doesn't exist."));
             e.printStackTrace();
-            return;
+            return false;
         }
         JSONParser parser = new JSONParser();
         JSONObject obj = null;
@@ -54,12 +50,13 @@ public class Profile {
             obj = (JSONObject) parser.parse(builder.toString());
         } catch (ParseException e) {
             e.printStackTrace();
+            return false;
         }
         Values.setSpoofedCPU((String) obj.get("spoofedCPU"));
         Values.setSpoofedGPU((String) obj.get("spoofedGPU"));
         Values.setSpoofedGPUVersion((String) obj.get("spoofedGPUVersion"));
         Values.setSpoofedVendor((String) obj.get("spoofedVendor"));
-        Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.GREEN + "Loaded spec profile " + EnumChatFormatting.YELLOW + profileName + EnumChatFormatting.GREEN + "."));
+        return true;
     }
 
 }
