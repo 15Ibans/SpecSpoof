@@ -43,25 +43,25 @@ public class SpecProfileCommand extends CommandBase implements ICommand {
                 profileNames.set(i, currentValue.substring(0, currentValue.length() - 8));
             }
             if (profileNames.size() == 0) {
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "No spec profiles are currently saved."));
+                sendMessage(EnumChatFormatting.RED + "No spec profiles are currently saved.");
             } else {
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.GREEN + "Current saved spec profiles:"));
-                profileNames.forEach(p -> Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("- " + EnumChatFormatting.YELLOW + p)));
+                sendMessage(EnumChatFormatting.GREEN + "Current saved spec profiles:");
+                profileNames.forEach(p -> sendMessage("- " + EnumChatFormatting.YELLOW + p));
             }
         } else if (args.length >= 2 && args[0].equals("load")) {
             Profile profile = new Profile(SpecSpoof.configFolder + "\\profiles");
             String profileName = Utils.argsToString(args, 1);
             boolean isLoaded = profile.loadProfile(profileName);
             if (isLoaded) {
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.GREEN + "Loaded spec profile " + EnumChatFormatting.YELLOW + profileName));
+                sendMessage(EnumChatFormatting.GREEN + "Loaded spec profile " + EnumChatFormatting.YELLOW + profileName);
             } else {
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Failed to load profile " + EnumChatFormatting.YELLOW + profileName + EnumChatFormatting.RED + ". Maybe it doesn't exist?"));
+                sendMessage(EnumChatFormatting.RED + "Failed to load profile " + EnumChatFormatting.YELLOW + profileName + EnumChatFormatting.RED + ". Maybe it doesn't exist?");
             }
         } else if (args.length >= 2 && args[0].equals("save")) {
             Profile profile = new Profile(SpecSpoof.configFolder + "\\profiles");
             String profileName = Utils.argsToString(args, 1);
             profile.saveProfile(profileName);
-            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.GREEN + "Saved spec profile as " + EnumChatFormatting.YELLOW + profileName + EnumChatFormatting.GREEN + "."));
+            sendMessage(EnumChatFormatting.GREEN + "Saved spec profile as " + EnumChatFormatting.YELLOW + profileName + EnumChatFormatting.GREEN + ".");
         } else if (args.length >= 2 && args[0].equals("delete")) {
             String profileName = Utils.argsToString(args, 1);
             List<String> profileNames = Utils.listFilesInDirectory(SpecSpoof.configFolder + "\\profiles", ".profile");
@@ -76,13 +76,17 @@ public class SpecProfileCommand extends CommandBase implements ICommand {
                 File f = new File(SpecSpoof.configFolder + "\\profiles\\" + profileName + ".profile");
                 boolean fileDeleted = f.delete();
                 if (fileDeleted)  {
-                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.GREEN + "Successfully deleted profile " + EnumChatFormatting.YELLOW + profileName));
+                    sendMessage(EnumChatFormatting.GREEN + "Successfully deleted profile " + EnumChatFormatting.YELLOW + profileName);
                 } else {
-                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Unable to delete profile"));
+                    sendMessage(EnumChatFormatting.RED + "Unable to delete profile");
                 }
             } else {
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + profileName + " doesn't exist"));
+                sendMessage(EnumChatFormatting.RED + profileName + " doesn't exist");
             }
         }
+    }
+
+    public void sendMessage(String message) {
+        Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(message))
     }
 }
