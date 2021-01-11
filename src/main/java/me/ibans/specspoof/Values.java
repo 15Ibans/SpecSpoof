@@ -13,9 +13,9 @@ public class Values {
         return isEnabled;
     }
 
-    public static void changeStat(boolean newStat) {
-        isEnabled = newStat;
-        Utils.updateConfig("mod_values", "isenabled", newStat);
+    public static void setEnabled(boolean value) {
+        isEnabled = value;
+        Utils.updateConfig("mod_values", "isenabled", value);
     }
 
     public static String getSpoofedCPU() {

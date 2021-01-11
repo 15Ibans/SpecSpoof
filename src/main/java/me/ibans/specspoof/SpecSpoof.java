@@ -48,7 +48,7 @@ public class SpecSpoof
         try {
             config.load();
 
-            Values.changeStat(config.getBoolean("isenabled", "mod_values", false, "Whether the mod is enabled or not"));
+            Values.setEnabled(config.getBoolean("isenabled", "mod_values", false, "Whether the mod is enabled or not"));
             Values.setSpoofedCPU(config.getString("spoofedcpu", "spoofed_values", "Spoofed cpu goes here", "Value for the spoofed cpu"));
             Values.setSpoofedGPU(config.getString("spoofedgpu", "spoofed_values", "Spoofed gpu goes here", "Value for the spoofed gpu"));
             Values.setSpoofedGPUVersion(config.getString("spoofedgpuversion", "spoofed_values", "Spoofed GPU version goes here", "Value for the spoofed gpu version"));

@@ -26,19 +26,12 @@ public class ModToggleCommand extends CommandBase implements ICommand {
 
     @Override
     public void processCommand(ICommandSender sender, String[] args) throws CommandException {
-        if (args.length <= 0) {
-            throw new WrongUsageException("/specspoof <enable/disable>");
+        boolean toggled = !Values.isEnabled();
+        Values.setEnabled(toggled);
+        if (toggled) {
+            Utils.sendMessage("&aSpecSpoof enabled");
         } else {
-            String parameter = Utils.argsToString(args, 0);
-            if (parameter.equals("enable")) {
-                Values.changeStat(true);
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.GREEN + "SpecSpoof enabled."));
-            } else if (parameter.equals("disable")) {
-                Values.changeStat(false);
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "SpecSpoof disabled."));
-            } else {
-                throw new WrongUsageException("/specspoof <enable/disable>");
-            }
+            Utils.sendMessage("&cSpecSpoof disabled");
         }
     }
 }

@@ -1,19 +1,24 @@
 package me.ibans.specspoof;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.ChatComponentText;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Utils {
 
     public static String argsToString(String[] args, int startPos) {
-        String string = "";
+        StringBuilder string = new StringBuilder();
         for (int i = startPos; i < args.length; i++) {
-            string += args[i] + " ";
+            string.append(args[i]).append(" ");
         }
-        string = string.trim();
-        return string;
+        string = new StringBuilder(string.toString().trim());
+        return string.toString();
     }
 
     public static void updateConfig(String category, String name, String newValue) {
@@ -37,7 +42,6 @@ public class Utils {
         return Arrays.asList(f.list(filter));
     }
 
-
     // Creates a new folder if it doesn't exist
     public static void createFolder(File dir) {
         if (!dir.exists()) {
@@ -47,6 +51,17 @@ public class Utils {
                 System.out.println("Unable to create " + dir.mkdir());
             }
         }
+    }
+
+    private static String format(String s) {
+        s = s.concat("&r");
+        Pattern pattern = Pattern.compile("(&)([0123456789abcdefklmnor])");
+        Matcher matcher = pattern.matcher(s);
+        return matcher.replaceAll("§$2");
+    }
+
+    public static void sendMessage(String message) {
+        Minecraft.getMinecraft().thePlayer.addChatComponentMessage(new ChatComponentText(format(message)));
     }
 
 }
