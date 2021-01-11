@@ -14,10 +14,11 @@ import java.util.stream.Stream;
 
 public class Profile {
 
-    public String saveDir;
+    public static final Profile INSTANCE = new Profile();
 
-    public Profile(String saveDir) {
-        this.saveDir = saveDir;
+    public String saveDir = SpecSpoof.configFolder + "/profiles";
+
+    public Profile() {
         Utils.createFolder(new File(saveDir));
     }
 
@@ -29,7 +30,7 @@ public class Profile {
         obj.put("spoofedGPUVersion", Values.getSpoofedGPUVersion());
         obj.put("spoofedVendor", Values.getSpoofedVendor());
 
-        try (FileWriter file = new FileWriter(saveDir + "\\" + profileName + ".profile")) {
+        try (FileWriter file = new FileWriter(saveDir + "/" + profileName + ".profile")) {
             file.write(obj.toJSONString());
         } catch (IOException e) {
             e.printStackTrace();

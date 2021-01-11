@@ -16,7 +16,9 @@ import java.util.List;
 //- make it so it detects if the file doesn't save
 
 public class SpecProfileCommand extends CommandBase implements ICommand {
-    
+
+    private final Profile profile = Profile.INSTANCE;
+
     @Override
     public String getCommandName() {
         return "specprofile";
@@ -34,9 +36,9 @@ public class SpecProfileCommand extends CommandBase implements ICommand {
 
     @Override
     public void processCommand(ICommandSender sender, String[] args) throws CommandException {
-        if(args.length <= 0) throw new WrongUsageException("/specprofile <load/save/delete/list> <profileName>");
-        if(args.length == 1) {
-            final Profile profile = new Profile(SpecSpoof.configFolder + "\\profiles");
+        String wrongUsage = "/specprofile <load/save/delete/list> <profileName>";
+        if (args.length <= 0) throw new WrongUsageException(wrongUsage);
+        if (args.length == 1) {
             final List<String> profileNames = Utils.listFilesInDirectory(profile.saveDir, ".profile");
             for (int i = 0; i < profileNames.size(); i++) {
                 String currentValue = profileNames.get(i);
@@ -47,27 +49,24 @@ public class SpecProfileCommand extends CommandBase implements ICommand {
                 sendMessage(EnumChatFormatting.GREEN + "Current saved spec profiles:");
                 profileNames.forEach(p -> sendMessage("- " + EnumChatFormatting.YELLOW + p));
             }
-        } else if(args.length >= 2) {
+        } else {
             if (args[0].equalsIgnoreCase("load")) {
-                final Profile profile = new Profile(SpecSpoof.configFolder + "\\profiles");
                 final String profileName = Utils.argsToString(args, 1);
                 final boolean isLoaded = profile.loadProfile(profileName);
 
                 if (isLoaded) sendMessage(EnumChatFormatting.GREEN + "Loaded spec profile " + EnumChatFormatting.YELLOW + profileName);
                 else sendMessage(EnumChatFormatting.RED + "Failed to load profile " + EnumChatFormatting.YELLOW + profileName + EnumChatFormatting.RED + ". Maybe it doesn't exist?");
             } else if (args[0].equalsIgnoreCase("save")) {
-                final Profile profile = new Profile(SpecSpoof.configFolder + "\\profiles");
                 final String profileName = Utils.argsToString(args, 1);
-
                 profile.saveProfile(profileName);
                 sendMessage(EnumChatFormatting.GREEN + "Saved spec profile as " + EnumChatFormatting.YELLOW + profileName + EnumChatFormatting.GREEN + ".");
             } else if (args[0].equalsIgnoreCase("delete")) {
                 final String profileName = Utils.argsToString(args, 1);
-                final List<String> profileNames = Utils.listFilesInDirectory(SpecSpoof.configFolder + "\\profiles", ".profile");
-                final boolean isProfileInFiles = false;
+                final List<String> profileNames = Utils.listFilesInDirectory(SpecSpoof.configFolder + "/profiles", ".profile");
+                boolean isProfileInFiles = false;
 
-                for (String profile : profileNames) {
-                    if (profile.substring(0, profile.length() - 8).equals(profileName)) {
+                for (String p : profileNames) {
+                    if (p.substring(0, p.length() - 8).equals(profileName)) {
                         isProfileInFiles = true;
                         break;
                     }
@@ -79,6 +78,8 @@ public class SpecProfileCommand extends CommandBase implements ICommand {
                     if (fileDeleted) sendMessage(EnumChatFormatting.GREEN + "Successfully deleted profile " + EnumChatFormatting.YELLOW + profileName);
                     else sendMessage(EnumChatFormatting.RED + "Unable to delete profile");
                 } else sendMessage(EnumChatFormatting.RED + profileName + " doesn't exist");
+            } else {
+                throw new WrongUsageException(wrongUsage);
             }
         }
         
@@ -86,6 +87,6 @@ public class SpecProfileCommand extends CommandBase implements ICommand {
 
     // should probably be moved into its own Utilities file
     public void sendMessage(String message) {
-        Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(message))
+        Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(message));
     }
 }
