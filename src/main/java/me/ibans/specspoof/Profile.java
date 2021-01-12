@@ -1,8 +1,6 @@
 package me.ibans.specspoof;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import com.google.gson.*;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -14,6 +12,10 @@ import java.util.stream.Stream;
 
 public class Profile {
 
+    private static final Gson gson = new GsonBuilder()
+            .setPrettyPrinting()
+            .create();
+
     public static final Profile INSTANCE = new Profile();
 
     public String saveDir = SpecSpoof.configFolder + "/profiles";
@@ -23,40 +25,40 @@ public class Profile {
     }
 
     public void saveProfile(String profileName) {
-        JSONObject obj = new JSONObject();
-        obj.put("profileName", profileName);
-        obj.put("spoofedCPU", Values.getSpoofedCPU());
-        obj.put("spoofedGPU", Values.getSpoofedGPU());
-        obj.put("spoofedGPUVersion", Values.getSpoofedGPUVersion());
-        obj.put("spoofedVendor", Values.getSpoofedVendor());
+        JsonObject obj = new JsonObject();
+        obj.addProperty("profileName", profileName);
+        obj.addProperty("spoofedCPU", Values.getSpoofedCPU());
+        obj.addProperty("spoofedGPU", Values.getSpoofedGPU());
+        obj.addProperty("spoofedGPUVersion", Values.getSpoofedGPUVersion());
+        obj.addProperty("spoofedVendor", Values.getSpoofedVendor());
 
         try (FileWriter file = new FileWriter(saveDir + "/" + profileName + ".profile")) {
-            file.write(obj.toJSONString());
+            file.write(gson.toJson(obj));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public boolean loadProfile(String profileName) {
+    public boolean loadProfile(String profileName) throws JsonParseException, IllegalStateException {
         StringBuilder builder = new StringBuilder();
-        try (Stream<String> stream = Files.lines(Paths.get(saveDir + "\\" + profileName + ".profile"), StandardCharsets.UTF_8)) {
+        try (Stream<String> stream = Files.lines(Paths.get(saveDir + "/" + profileName + ".profile"), StandardCharsets.UTF_8)) {
             stream.forEach(s -> builder.append(s).append("\n"));
         } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
-        JSONParser parser = new JSONParser();
-        JSONObject obj = null;
-        try {
-            obj = (JSONObject) parser.parse(builder.toString());
-        } catch (ParseException e) {
-            e.printStackTrace();
+
+        JsonParser parser = new JsonParser();
+        JsonObject obj = parser.parse(builder.toString()).getAsJsonObject();
+
+        if (obj == null) {
             return false;
         }
-        Values.setSpoofedCPU((String) obj.get("spoofedCPU"));
-        Values.setSpoofedGPU((String) obj.get("spoofedGPU"));
-        Values.setSpoofedGPUVersion((String) obj.get("spoofedGPUVersion"));
-        Values.setSpoofedVendor((String) obj.get("spoofedVendor"));
+
+        Values.setSpoofedCPU(obj.get("spoofedCPU").getAsString());
+        Values.setSpoofedGPU(obj.get("spoofedGPU").getAsString());
+        Values.setSpoofedGPUVersion(obj.get("spoofedGPUVersion").getAsString());
+        Values.setSpoofedVendor(obj.get("spoofedVendor").getAsString());
         return true;
     }
 

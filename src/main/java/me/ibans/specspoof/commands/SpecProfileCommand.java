@@ -1,5 +1,6 @@
 package me.ibans.specspoof.commands;
 
+import com.google.gson.JsonParseException;
 import me.ibans.specspoof.Profile;
 import me.ibans.specspoof.SpecSpoof;
 import me.ibans.specspoof.Utils;
@@ -52,8 +53,16 @@ public class SpecProfileCommand extends CommandBase implements ICommand {
         } else {
             if (args[0].equalsIgnoreCase("load")) {
                 final String profileName = Utils.argsToString(args, 1);
-                final boolean isLoaded = profile.loadProfile(profileName);
-
+                boolean isLoaded;
+                try {
+                    isLoaded = profile.loadProfile(profileName);
+                } catch (JsonParseException e) {
+                    Utils.sendMessage("&cUnable to parse profile &e" + profileName);
+                    return;
+                } catch (IllegalStateException e) {
+                    Utils.sendMessage("&cUnable to load profile &e" + profileName + "&c: &n" + e.getMessage());
+                    return;
+                }
                 if (isLoaded) sendMessage(EnumChatFormatting.GREEN + "Loaded spec profile " + EnumChatFormatting.YELLOW + profileName);
                 else sendMessage(EnumChatFormatting.RED + "Failed to load profile " + EnumChatFormatting.YELLOW + profileName + EnumChatFormatting.RED + ". Maybe it doesn't exist?");
             } else if (args[0].equalsIgnoreCase("save")) {
@@ -73,7 +82,7 @@ public class SpecProfileCommand extends CommandBase implements ICommand {
                 }
                 
                 if (isProfileInFiles) {
-                    final File f = new File(SpecSpoof.configFolder + "\\profiles\\" + profileName + ".profile");
+                    final File f = new File(SpecSpoof.configFolder + "/profiles/" + profileName + ".profile");
                     final boolean fileDeleted = f.delete();
                     if (fileDeleted) sendMessage(EnumChatFormatting.GREEN + "Successfully deleted profile " + EnumChatFormatting.YELLOW + profileName);
                     else sendMessage(EnumChatFormatting.RED + "Unable to delete profile");

@@ -39,11 +39,11 @@ public class SpecSpoof
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent e) {
-        configFolder = e.getModConfigurationDirectory().getAbsolutePath() + "\\specspoof";
+        configFolder = e.getModConfigurationDirectory().getAbsolutePath() + "/specspoof";
         File configDir = new File(configFolder);
         Utils.createFolder(configDir);
 
-        config = new Configuration(new File(configFolder + "\\specspoof.cfg"));
+        config = new Configuration(new File(configFolder + "/specspoof.cfg"));
 
         try {
             config.load();
