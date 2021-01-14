@@ -57,11 +57,11 @@ public class Utils {
         s = s.concat("&r");
         Pattern pattern = Pattern.compile("(&)([0123456789abcdefklmnor])");
         Matcher matcher = pattern.matcher(s);
-        return matcher.replaceAll("§$2");
+        return matcher.replaceAll("\u00a7$2");
     }
 
     public static void sendMessage(String message) {
-        Minecraft.getMinecraft().thePlayer.addChatComponentMessage(new ChatComponentText(format(message)));
+        Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(format(message)));
     }
 
 }
